@@ -8,7 +8,7 @@ module.exports = async (client) => {
     * STREAMING → !
     * LISTENING → Ouvindo.
     * WATCHING → Assitindo.
-    *
+    */
 
   let status = [
     { name: `Mencione para ver o meu prefixo.`, type: 'LISTENING' },
@@ -20,8 +20,11 @@ module.exports = async (client) => {
   function setStatus(){
     let randomStatus = status[Math.floor(Math.random()*status.length)]    
 
-    client.user.setPresence({ activity: randomStatus, status: 'DNP' })
+    client.user.setPresence({ activity: randomStatus, status: 'dnd' })
   }
   setStatus();
-  setInterval(() => setStatus(), 5000)*/
+  setInterval(() => {
+		setStatus();
+		console.log('Ping')
+	}, 5000)//*/
 }

@@ -22,7 +22,7 @@ const db = require('./utils/database');
 
 require("./utils/functions")(client);
 
-// client.config = require("./utils/config");
+client.config = require("./utils/dbConfigs");
 
 module.exports = client
 

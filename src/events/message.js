@@ -1,6 +1,6 @@
-const Discord = require('discord.js')
-const chalk = require('chalk')
-const mongoose = require('mongoose')
+const Discord = require('discord.js');
+const chalk = require('chalk');
+const mongoose = require('mongoose');
 
 const UserSchema = require('../models/users')
 const MemberSchema = require('../models/members')
@@ -8,8 +8,7 @@ const GuildSchema = require('../models/guilds')
 
 module.exports = async (client, message) => {
   if (message.author.bot || message.author.id == client.user.id) return
-  if (message.author.id != 683703998729027769 ) return message.reply('Em fase de desenvolvimento.').then((msg) => { msg.delete({ timeout: 5000 }) });
-
+  
   require('../utils/embeds')(client, message);
 
   const db               =  mongoose
@@ -67,18 +66,19 @@ module.exports = async (client, message) => {
 	  })
 	}
 
-	if (message.content == '<@!' + client.user.id + '>') {
-	  if (db.guild.config.prefix != null) {
-	    client.fieldsEmbed(message.author.tag, '', [
-	      { name: 'Prefixo', value: db.guild.config.prefix },
-	      { name: 'Links', value: '[Invite](https://discord.com/api/oauth2/authorize?client_id=${process.env.WEB_CLIENT_ID}&permissions=268758208)\nWebSite(Em desenvolvimento)' }
-	    ])
-	  } else {
-	    message.reply(`Prefixo: ${db.guild.prefix}\n\nMe adicione em seu servidor: https://discord.com/api/oauth2/authorize?client_id=${process.env.WEB_CLIENT_ID}&permissions=268758208\n\nWebSite: Nenhum por Enquanto.`)
-	  }
+  let prefix;
+	try {
+		prefix = db.guild.get('prefix');
+	} catch(e) {
+		prefix = 'r!';
 	}
 
-  let prefix = db.guild.get('prefix');
+	if (message.content == '<@!' + client.user.id + '>') {
+	  client.fieldsEmbed(client.user.username, '', [
+			{ name: 'Prefixo', value: db.guild.prefix },
+			{ name: 'Links', value: `[Invite](https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=268758208)\nWebSite(Em desenvolvimento` }
+		], client.user)
+	}
   
   if (message.content.indexOf(prefix) !== 0) return
 
@@ -88,12 +88,14 @@ module.exports = async (client, message) => {
   const cmd = client.commands.get(command)
 
   if (!cmd) return
+	
+	// if (message.author.id != 683703998729027769 ) return message.reply('Em fase de desenvolvimento.').then((msg) => { msg.delete({ timeout: 5000 }) });
+
   let cmds = db.member.cmdsExecutados;
 
   await client.updateMember(message.guild.members.cache.find(m => m.id == message.author.id).user, {
     cmdsExecutados: ++cmds
   })
-
 
   console.log(`[${chalk.yellow('LOG')}]`, `${message.author.username} (${chalk.magenta(message.author.id)}) ran the command: ${chalk.yellow(cmd.help.name)}`)   
   if (cmd.conf.onlyguilds && !message.guild) return messsage.reply('teste')

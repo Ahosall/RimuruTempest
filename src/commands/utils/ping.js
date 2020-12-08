@@ -2,7 +2,8 @@ const Discord = require('discord.js');
 
 module.exports = {
   run: async (client, message, args) => {
-    // command ping.
+    const m = message.channel.send('Ping ?');
+		m.edit(`Pong! \`${m.createdTimestamp - message.createdTimestap}\`ms`)
     console.log('OK')
   },
   conf: {},
