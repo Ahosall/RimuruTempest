@@ -1,0 +1,27 @@
+{
+  "name": "rimuru",
+  "version": "20.12.7",
+  "description": "One simple bot for discord.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "nodemon src/app.js",
+    "test": "node src/test.js"
+  },
+  "author": "Feh's",
+  "license": "ISC",
+  "dependencies": {
+    "canvacord": "^5.0.8",
+    "canvas": "^2.6.1",
+    "chalk": "^4.1.0",
+    "discord-canvas": "^1.4.1",
+    "discord.js": "^12.5.1",
+    "enmap": "^5.8.2",
+    "moment": "^2.29.1",
+    "mongoose": "^5.11.4",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.6"
+  }
+}
