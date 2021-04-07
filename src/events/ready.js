@@ -25,6 +25,5 @@ module.exports = async (client) => {
   setStatus();
   setInterval(() => {
 		setStatus();
-		console.log('Ping')
-	}, 5000)//*/
+	}, 15000);
 }

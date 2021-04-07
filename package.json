@@ -10,6 +10,7 @@
   "author": "Feh's",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "canvacord": "^5.0.8",
     "canvas": "^2.6.1",
     "captcha-canvas": "^2.2.2",

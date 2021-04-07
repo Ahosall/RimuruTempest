@@ -74,7 +74,14 @@ module.exports = async (client, message) => {
 	}
 
 	if (message.content == '<@!' + client.user.id + '>') {
-	  client.fieldsEmbed(client.user.username, '', [
+		let prefixo;
+		if (db.guild) {
+			prefixo = db.guild.prefix
+		} else {
+			prefixo = 'r!'
+		}
+		
+	  	client.fieldsEmbed(client.user.username, '', [
 			{ name: 'Prefixo', value: db.guild.prefix },
 			{ name: 'Links', value: `[Invite](https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=268758208)\nWebSite(Em desenvolvimento` }
 		], client.user)
@@ -100,5 +107,5 @@ module.exports = async (client, message) => {
   console.log(`[${chalk.yellow('LOG')}]`, `${message.author.username} (${chalk.magenta(message.author.id)}) ran the command: ${chalk.yellow(cmd.help.name)}`)   
   if (cmd.conf.onlyguilds && !message.guild) return messsage.reply('teste')
 
-  cmd.run(client, message, args, db)
+  cmd.run(client, message, args, db, api)
 }

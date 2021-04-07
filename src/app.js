@@ -15,6 +15,8 @@ const client = new Discord.Client({
   partials: ['MESSAGE', 'CHANNEL', 'REACTION']
 });
 
+const api = require('./utils/api.js');
+
 client.commands = new Enmap()
 client.startTime = Date.now()
 
@@ -79,6 +81,36 @@ readdirSync('./src/events/').forEach(f => {
   	console.log('\n\n', err, '\n\n')
   }
 })
+
+let cmd = client.commands.map(cmd => cmd.help);
+
+cmd.forEach(command => {
+	let commandDB;
+	api.get(`/commands/${command.name}`)
+	.then((response) => {
+		return commandDB = response.data;
+	})
+	.catch((err) => {
+		console.error("ops! ocorreu um erro" + err);
+	});
+
+	if (!commandDB) {
+		console.log(commandDB);
+		api.post("/commands", {
+			name: command.name,
+			description: command.description,
+			aliases: command.alias
+		})
+	}
+});
+
+api.get("/commands")
+  .then((response) => { 
+	console.log(response.data)
+})
+  .catch((err) => {
+	console.error("ops! ocorreu um erro" + err);
+});
 
 console.log(`\nAll events have been ${chalk.green('LOADED')}!`);
 
