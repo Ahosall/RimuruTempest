@@ -85,35 +85,32 @@ readdirSync('./src/events/').forEach(f => {
 let cmd = client.commands.map(cmd => cmd.help);
 
 cmd.forEach(command => {
-	let commandDB;
-	api.get(`/commands/${command.name}`)
-	.then((response) => {
-		return commandDB = response.data;
-	})
-	.catch((err) => {
-		console.error("ops! ocorreu um erro" + err);
-	});
-
-	if (!commandDB) {
-		console.log(commandDB);
+	try {
+		api.get(`/commands/${command.name}`)
+			.then((response) => {
+				if (!response.data) {
+					api.post("/commands", {
+						name: command.name,
+						description: command.description,
+						aliases: command.alias
+					});
+				}
+			})
+			.catch((err) => {
+				console.error("ops! ocorreu um erro" + err);
+			});
+	} catch(err) {
 		api.post("/commands", {
 			name: command.name,
 			description: command.description,
 			aliases: command.alias
-		})
+		});
 	}
-});
-
-api.get("/commands")
-  .then((response) => { 
-	console.log(response.data)
-})
-  .catch((err) => {
-	console.error("ops! ocorreu um erro" + err);
+	
 });
 
 console.log(`\nAll events have been ${chalk.green('LOADED')}!`);
 
 db.then(() => console.log(`\n[ ${chalk.green('OK')} ] Connected to MongoDB`)).catch((err) => { console.log(`| ${chalk.red('ERR')} |`, err) });
 
-client.login(process.env.AUTH_TOKEN)
+client.login(process.env.AUTH_TOKEN);
