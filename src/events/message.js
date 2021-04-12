@@ -10,7 +10,7 @@ const api = require('../utils/api');
 const { response } = require('express');
 
 module.exports = async (client, message) => {
-	if (message.author.bot || message.author.id == client.user.id) return
+	if (message.author.bot) return
   
 	require('../utils/embeds')(client, message);
 	
@@ -38,81 +38,37 @@ module.exports = async (client, message) => {
 			return null;
 		});
 
-	/*
-		* Se por a caso o bot for adicionado em um servidor enquanto ele estiver off
-		* este script ira adicionar os dados necessários.
-		*/
-
+	/**
+	  * Se por a caso o bot for adicionado em um servidor enquanto ele estiver off
+	  * este script ira adicionar os dados necessários.
+	  */
 	if (!db.guild) {
-		let msg = await message.channel.send('**Registrando servidor no database ...**')
-
 		db.guild = api.post("/guilds", {
 			id: message.guild.id,
 			guildName: message.guild.name,
 			ownerName: message.guild.members.cache.find(m => m.id == message.guild.ownerID).user.username,
 			ownerId: message.guild.ownerID,
 		}).then(async (response) => {
-			await setTimeout(()=> {
-				msg.edit('**Servidor registrado.**').then(m => {
-				m.delete({timeout: 3000})
-				});
-			}, 1000);
-
+			console.log(`Servidor ${message.guild.name}(${message.guild.id}) Registrado com sucesso.`);
 			return await response.data;
 		}).catch((err) => {
-			let code = "Guild";
-			
-			msg.edit('Erro ao registrar Servidor, código do erro: ' + code).then(m => {
-				m.delete({timeout: 3000})
-			});
-
-			console.log(code, "ERROR", "\n\n\n\n", err);
+			console.log("ERROR", "\n\n\n\n", err);
 		});
-
-		
 	} else if (!db.member) {
-		let msg = await message.channel.send('**Registrando membro ...**');
-
-		db.member = api.post("/members", {
-			id: message.author.id
-		}).then(async (response) => {
-			msg.edit('**Membro registrado.**').then(m => {
-				m.delete({timeout: 3000})
+		db.member = api.post("/members", { id: message.author.id })
+			.then(async (response) => {
+				console.log(`Membro ${message.member.user.username}(${message.author.id}) Registrado com sucesso.`);				
+				return await response.data;
+			}).catch((err) => {				
+				console.log("++ERROR++", "\n\n\n\n", err);
 			});
-			
-			return await response.data;
-		}).catch((err) => {
-			let code = "member";
-
-			msg.edit('Erro ao registrar Membro, código do erro: ' + code).then(m => {
-				m.delete({timeout: 3000});
-			});
-			console.log(code, "++ERROR++", "\n\n\n\n", err)
-		});
 	} else if (!db.user) {
-		message.react("🔄").then(msg => {
-			db.user = api.post("/users", {
-				id: message.author.id
-			}).then(async (response) => {
-				msg.remove();
-	
-				message.react('✅').then(m => {
-					setTimeout(()=> {
-						m.remove()
-					}, 3000);
-				});
-				
-				return response.data;
-			}).catch((e) => {
-	
-				setTimeout(()=> {
-					message.react('❌').then(m => {
-						m.remove()
-					});
-				}, 3000);
-	
-				console.log('user', "--ERROR--\n\n\n", e)
-			});
+		db.user = api.post("/users", { id: message.author.id })
+		.then(async (response) => {
+			console.log(`Usuário ${message.author.tag}(${message.author.id}) Registrado com sucesso.`);				
+			return response.data;
+		}).catch((e) => {
+			console.log("--ERROR--\n\n\n", e);
 		});
 	}
 
